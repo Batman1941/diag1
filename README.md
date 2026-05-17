@@ -13,9 +13,9 @@
 
 **▶ Demo na żywo: [diag1.imaster.pl](https://diag1.imaster.pl)**
 
-<!-- Zrzut ekranu: dodaj plik np. docs/screenshot.png i odkomentuj poniższą linię
-![Diag1 — interfejs aplikacji](docs/screenshot.png)
--->
+![Diag1 — raport analizy trendów wyników badań laboratoryjnych](assets/screenshot.jpg)
+
+<sub>Ekran raportu: zanonimizowane porównanie dwóch serii wyników z analizą wygenerowaną przez model AI.</sub>
 
 ---
 
