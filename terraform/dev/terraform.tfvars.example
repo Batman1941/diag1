@@ -1,0 +1,38 @@
+# =============================================================================
+# terraform/dev/terraform.tfvars.example
+#
+# Środowisko DEV – do lokalnego testowania infrastruktury.
+# Środowisko STAGE (terraform/stage/) jest tym, które widzi promotor.
+#
+# Skopiuj do terraform.tfvars:
+#   cp terraform/dev/terraform.tfvars.example terraform/dev/terraform.tfvars
+# =============================================================================
+
+# ── Projekt GCP ───────────────────────────────────────────────────────────────
+project_id = "your-gcp-project-id"
+region     = "europe-west4"
+
+# ── Artifact Registry ─────────────────────────────────────────────────────────
+repo_name = "diag1"
+
+# ── Baza danych ───────────────────────────────────────────────────────────────
+database_url = "postgresql+psycopg://diag1_user:<db-password>@<db-host>:5432/diag1_dev"
+
+# ── Vertex AI (zalecane: stały region danych) ─────────────────────────────────
+vertex_location = "europe-west4"
+vertex_model    = "gemini-2.5-flash"
+
+# Gemini Developer API (opcjonalne, nieużywane w trybie AI_PROVIDER=vertex)
+gemini_api_key = ""
+
+# ── Domena i bezpieczeństwo ──────────────────────────────────────────────────
+domain = "dev.app.example.com"
+
+# Obrazy budowane lokalnie i wypychane do Artifact Registry.
+backend_image  = "europe-west4-docker.pkg.dev/your-gcp-project-id/diag1/backend:dev-001"
+frontend_image = "europe-west4-docker.pkg.dev/your-gcp-project-id/diag1/frontend:dev-001"
+
+# Opcjonalna ochrona aplikacji front-end hasłem.
+frontend_access_password = ""
+frontend_access_cookie_secret = ""
+frontend_access_session_ttl_hours = 12

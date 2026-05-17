@@ -1,0 +1,40 @@
+KLAUZULA INFORMACYJNA RODO - DIAG1
+
+1. Administrator danych
+- Administratorem danych jest Maciej Bialostocki.
+- Kontakt: auto@vabank.pl
+
+2. Inspektor ochrony danych
+- Administrator nie wyznaczyl IOD.
+
+3. Cele i podstawy prawne
+- Celem jest wykonanie jednorazowej analizy trendow wynikow badan.
+- Podstawa prawna: art. 6 ust. 1 lit. a RODO (zgoda).
+- Dla danych o zdrowiu: art. 9 ust. 2 lit. a RODO (wyrazna zgoda).
+
+4. Odbiorcy danych
+- Odbiorcami danych sa dostawcy infrastruktury i modeli Google AI (Vertex AI / Gemini API).
+
+5. Transfer poza EOG
+- Przy konfiguracji Vertex AI w wybranym regionie UE przetwarzanie zapytania i odpowiedzi odbywa sie w tym regionie (Data Residency).
+- Vertex AI jest zalecany, jesli wymagane jest scisle wskazanie lokalizacji przetwarzania.
+- W przypadku uzycia Gemini API (Developer API) routing jest globalny i nie gwarantuje wskazania konkretnego kraju przetwarzania, dlatego moze dojsc do transferu poza EOG.
+- W takich przypadkach stosowane sa zabezpieczenia z art. 46 RODO (w tym SCC).
+
+6. Okres przechowywania
+- Pliki PDF sa przetwarzane w RAM i nie sa trwale zapisywane jako pliki.
+- Raport i tekst wyodrebniony z dokumentow sa usuwane po zakonczeniu sesji przez uzytkownika,
+  a najpozniej po 24 godzinach od utworzenia sesji.
+- Metadane zgody (UUID, czas, status, zgody, poziom anonimizacji) sa przechowywane dla
+  rozliczalnosci (art. 5 ust. 2 RODO).
+
+7. Prawa osoby, ktorej dane dotycza
+- Prawo dostepu, sprostowania, usuniecia, ograniczenia, przenoszenia danych i sprzeciwu.
+- Prawo do cofniecia zgody w dowolnym momencie.
+
+8. Prawo do skargi
+- Skarga do Prezesa UODO (PUODO), ul. Moniuszki 1A, 00-014 Warszawa.
+
+9. Zautomatyzowane decyzje
+- Administrator nie podejmuje decyzji wywolujacych skutki prawne w sposob wylacznie zautomatyzowany.
+- Raport ma charakter informacyjny i edukacyjny.

@@ -1,0 +1,32 @@
+REGULAMIN SWIADCZENIA USLUG DROGA ELEKTRONICZNA - DIAG1
+
+1. Rodzaj i zakres uslugi
+- Usluga polega na jednorazowej analizie porownawczej danych liczbowych z dwoch plikow PDF.
+- Raport jest generowany automatycznie przy uzyciu modeli Google AI.
+- Usluga jest bezplatna i ma charakter edukacyjny.
+
+2. Wymogi techniczne
+- Urzadzenie z dostepem do Internetu.
+- Aktualna przegladarka internetowa z obsluga JavaScript.
+- Dwa pliki PDF z wynikami badan.
+
+3. Zakaz dostarczania tresci bezprawnych
+- Uzytkownik nie moze przesylac tresci bezprawnych ani naruszajacych prawa osob trzecich.
+
+4. Zawarcie i rozwiazanie umowy
+- Umowa o swiadczenie uslugi droga elektroniczna zostaje zawarta z chwila rozpoczecia sesji i przeslania plikow.
+- Uzytkownik moze zakonczyc usluge w kazdym momencie przyciskiem "Zakoncz sesje i usun dane".
+
+5. Reklamacje
+- Reklamacje nalezy kierowac na adres: auto@vabank.pl.
+- Reklamacja powinna zawierac opis problemu oraz date zdarzenia.
+- Odpowiedz na reklamacje jest udzielana w terminie do 14 dni.
+
+6. Odpowiedzialnosc
+- Aplikacja nie jest wyrobem medycznym w rozumieniu Rozporzadzenia (UE) 2017/745 (MDR).
+- Raport nie stanowi diagnozy medycznej i nie zastepuje konsultacji lekarskiej.
+- Model AI moze generowac bledy (halucynacje).
+- Uzytkownik korzysta z uslugi na wlasne ryzyko.
+
+7. Dane osobowe
+- Zasady przetwarzania danych osobowych opisuje dokument "Polityka Prywatnosci".

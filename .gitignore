@@ -1,0 +1,50 @@
+# ── Środowisko lokalne ────────────────────────────────────────────────────────
+.env
+.DS_Store
+.vscode/
+.claude/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# ── Dane i dokumenty – NIE trafiają do repozytorium ──────────────────────────
+badania/
+docs/
+testy/
+CLAUDE.md
+backend/seed/
+backend/tests/
+backend/app/testsupport/
+docker-compose.test.yml
+backend/*.local.json
+backend/*service-account*.json
+backend/*credentials*.json
+*.pem
+*.key
+
+# ── Skrypty pomocnicze do dokumentacji ───────────────────────────────────────
+scripts/capture_local_screenshots.*
+scripts/generate_data_flow_diagram.py
+
+# ── GitHub Actions (deploy wyłącznie lokalnie) ────────────────────────────────
+.github/
+
+# ── Backend build artifacts ───────────────────────────────────────────────────
+backend/.pytest_cache/
+backend/__pycache__/
+backend/project-*.json
+
+# ── Frontend build artifacts ──────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+
+# ── Terraform – sekrety i stan lokalny ───────────────────────────────────────
+terraform.tfstate
+terraform.tfstate.backup
+terraform/**/*.tfvars
+terraform/**/.terraform/
+terraform/**/.terraform.lock.hcl
+terraform/**/terraform.tfstate
+terraform/**/terraform.tfstate.backup

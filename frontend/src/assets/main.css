@@ -1,0 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=Source+Sans+3:wght@400;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  font-family: "Source Sans 3", sans-serif;
+}
+
+.glass-panel {
+  @apply bg-slate-900/60 border border-slate-700/60 backdrop-blur rounded-2xl shadow-xl;
+}
+
+.gradient-bg {
+  background: radial-gradient(circle at top, rgba(14, 165, 233, 0.25), transparent 45%),
+    radial-gradient(circle at 80% 20%, rgba(54, 194, 255, 0.15), transparent 35%),
+    linear-gradient(180deg, #0b0f1a 0%, #0f172a 45%, #0b1220 100%);
+}
+
+.step-pill {
+  @apply text-xs uppercase tracking-[0.2em] text-slate-300;
+}
