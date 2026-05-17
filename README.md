@@ -13,7 +13,7 @@
 
 **▶ Demo na żywo: [diag1.imaster.pl](https://diag1.imaster.pl)**
 
-![Diag1 — ekran zgód i wyboru poziomu anonimizacji danych](assets/screenshot.jpg)
+![Diag1 — ekran zgód i wyboru poziomu anonimizacji danych](assets/diag1-screen.jpg)
 
 <sub>Ekran startowy: zgody (Legal Gate), informacja o przetwarzaniu danych oraz wybór poziomu anonimizacji przed analizą.</sub>
 
