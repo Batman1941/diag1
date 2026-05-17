@@ -13,9 +13,9 @@
 
 **▶ Demo na żywo: [diag1.imaster.pl](https://diag1.imaster.pl)**
 
-![Diag1 — raport analizy trendów wyników badań laboratoryjnych](assets/screenshot.jpg)
+![Diag1 — ekran zgód i wyboru poziomu anonimizacji danych](assets/screenshot.jpg)
 
-<sub>Ekran raportu: zanonimizowane porównanie dwóch serii wyników z analizą wygenerowaną przez model AI.</sub>
+<sub>Ekran startowy: zgody (Legal Gate), informacja o przetwarzaniu danych oraz wybór poziomu anonimizacji przed analizą.</sub>
 
 ---
 
