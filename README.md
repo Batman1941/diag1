@@ -1,62 +1,85 @@
 # Diag1
 
-Diag1 to aplikacja webowa do porownywania wynikow badan laboratoryjnych z uzyciem modelu AI. Publiczne repo zawiera tylko kod aplikacji, infrastrukture oraz pliki potrzebne do lokalnego buildu i wdrozenia. Nie zawiera dokumentow projektowych, przykladowych badan, wynikow testow ani workflow GitHub Actions.
+> Aplikacja webowa do porównywania wyników badań laboratoryjnych z użyciem AI — z anonimizacją danych osobowych po stronie serwera.
 
-## Stack
+[![Live demo](https://img.shields.io/badge/live%20demo-diag1.imaster.pl-2ea44f?logo=googlecloud&logoColor=white)](https://diag1.imaster.pl)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](#stack-technologiczny)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](#stack-technologiczny)
+[![Vue 3](https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white)](#stack-technologiczny)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)](#stack-technologiczny)
+[![Terraform](https://img.shields.io/badge/Terraform-7B42BC?logo=terraform&logoColor=white)](#wdrożenie-do-gcp)
+[![Google Cloud](https://img.shields.io/badge/Cloud%20Run-4285F4?logo=googlecloud&logoColor=white)](#wdrożenie-do-gcp)
 
-- Backend: FastAPI, SQLAlchemy, Alembic
-- Frontend: Vue 3, Vite, Tailwind
-- Infrastruktura: Docker, Cloud Run, Terraform, Artifact Registry
-- AI: Vertex AI / Gemini
+**▶ Demo na żywo: [diag1.imaster.pl](https://diag1.imaster.pl)**
 
-## Struktura repo
+<!-- Zrzut ekranu: dodaj plik np. docs/screenshot.png i odkomentuj poniższą linię
+![Diag1 — interfejs aplikacji](docs/screenshot.png)
+-->
 
-```text
-.
-├── backend/            # aplikacja FastAPI i migracje Alembic
-├── frontend/           # aplikacja Vue 3
-├── terraform/          # infrastruktura dla env dev i stage
-├── scripts/            # skrypty pomocnicze do GCP / Terraform / DNS
-├── docker-compose.yml  # lokalne uruchomienie calego stosu
-├── Makefile            # podstawowe komendy developerskie
-└── .env.example        # wzor zmiennych srodowiskowych
+---
+
+## O projekcie
+
+Diag1 powstał jako praca końcowa (IMiOZ) i pokazuje, jak **bezpiecznie wykorzystać model językowy do analizy danych medycznych**. Użytkownik wprowadza dwie serie wyników badań laboratoryjnych, a aplikacja:
+
+1. parsuje dane (w tym z plików PDF),
+2. **anonimizuje dane osobowe** przed wysłaniem czegokolwiek do modelu AI,
+3. zleca modelowi (Vertex AI lub Gemini) porównanie serii i generuje czytelną analizę,
+4. przechowuje wynik w sesji o ograniczonym czasie życia (dane nie są składowane na stałe).
+
+Kluczowy element to **privacy-by-design**: model nigdy nie widzi surowych danych identyfikujących pacjenta, a poziom anonimizacji jest konfigurowalny.
+
+## Funkcje
+
+- 🔬 Porównanie dwóch serii wyników badań laboratoryjnych z analizą AI
+- 🛡️ Automatyczna anonimizacja danych osobowych z konfigurowalnymi poziomami
+- 📄 Obsługa wejścia tekstowego oraz parsowanie wyników z PDF
+- ⏱️ Sesje analityczne z czasowym TTL — brak trwałego składowania danych wrażliwych
+- 🤖 Dwa tryby dostawcy AI: **Vertex AI** lub **Gemini Developer API** (przełączalne zmienną środowiskową)
+- 🔐 Opcjonalna bramka hasłowa front-endu + prosty panel administracyjny
+- ☁️ Pełna infrastruktura jako kod (Terraform): Cloud Run, Artifact Registry, globalny Load Balancer, zarządzany certyfikat SSL
+- 🐳 Cały stack lokalnie jednym poleceniem (Docker Compose + Makefile)
+
+## Architektura
+
+```mermaid
+flowchart LR
+    U["Użytkownik<br/>(przeglądarka)"] -->|HTTPS| LB["Globalny Load Balancer<br/>+ zarządzany SSL"]
+    LB --> FE["Frontend<br/>Vue 3 · nginx<br/>(Cloud Run)"]
+    FE -->|/api| BE["Backend<br/>FastAPI<br/>(Cloud Run)"]
+    BE --> AN["Anonimizacja<br/>danych osobowych"]
+    AN --> AI["Vertex AI / Gemini<br/>gemini-2.5-flash"]
+    BE --> DB[("PostgreSQL<br/>sesje z TTL")]
+
+    subgraph IaC["Infrastruktura jako kod"]
+        TF["Terraform"] -.-> LB
+        TF -.-> FE
+        TF -.-> BE
+        TF -.-> AR["Artifact Registry"]
+    end
 ```
 
-## Lokalny start
+Model wdrożenia jest celowo prosty: obrazy budowane lokalnie → Artifact Registry → Terraform uruchamiany lokalnie. Repo nie zakłada GitHub Actions ani Cloud Build.
 
-Wymagania:
+## Stack technologiczny
 
-- VS Code lub inny edytor
-- Docker Desktop / Docker Engine
-- `make`
-- opcjonalnie `gcloud`, jesli lokalnie chcesz uzywac Vertex AI
+| Warstwa | Technologie |
+|---|---|
+| Backend | Python 3.12, FastAPI, SQLAlchemy, Alembic |
+| Frontend | Vue 3, Vite 5, Tailwind CSS, nginx |
+| AI | Vertex AI / Google Gemini (`gemini-2.5-flash`) |
+| Baza danych | PostgreSQL |
+| Infrastruktura | Docker, Cloud Run, Terraform, Artifact Registry, globalny LB + SSL |
 
-Kroki:
+## Szybki start (lokalnie)
+
+Wymagania: Docker (Desktop lub Engine), `make`, opcjonalnie `gcloud` jeśli używasz Vertex AI lokalnie.
 
 ```bash
-git clone <repo-url> diag1
+git clone https://github.com/Batman1941/diag1.git
 cd diag1
-cp .env.example .env
-```
-
-Skonfiguruj `.env`:
-
-- Dla Gemini Developer API ustaw `AI_PROVIDER=gemini` i `GEMINI_API_KEY`.
-- Dla Vertex AI ustaw `AI_PROVIDER=vertex`, `VERTEX_PROJECT_ID`, `VERTEX_LOCATION` i zaloguj sie lokalnie przez `gcloud auth application-default login`, albo uzyj lokalnego pliku service account JSON.
-
-Jesli korzystasz z lokalnego pliku service account JSON w Dockerze:
-
-1. zapisz go lokalnie jako `backend/service-account.local.json`,
-2. plik pozostaw poza Gitem,
-3. ustaw w `.env`:
-
-```dotenv
-GOOGLE_APPLICATION_CREDENTIALS=/secrets/service-account.local.json
-```
-
-Uruchom aplikacje:
-
-```bash
+cp .env.example .env      # uzupełnij wartości
 make up
 make migrate
 ```
@@ -65,151 +88,65 @@ Adresy lokalne:
 
 - frontend: `http://localhost:9080`
 - backend health: `http://localhost:9000/api/healthz`
-- postgres: `localhost:9543`
+- PostgreSQL: `localhost:9543`
 
-Podstawowe komendy:
+Podstawowe komendy: `make up` · `make down` · `make logs` · `make build` · `make migrate`
 
-- `make up`
-- `make down`
-- `make logs`
-- `make build`
-- `make migrate`
+### Wybór dostawcy AI
 
-## Wdrozenie do GCP z lokalnej maszyny
+- **Gemini Developer API:** `AI_PROVIDER=gemini` + `GEMINI_API_KEY`
+- **Vertex AI:** `AI_PROVIDER=vertex` + `VERTEX_PROJECT_ID` + `VERTEX_LOCATION`, oraz `gcloud auth application-default login` (lub lokalny plik service account JSON wskazany przez `GOOGLE_APPLICATION_CREDENTIALS`)
 
-Model wdrozenia jest celowo prosty:
+## Wdrożenie do GCP
 
-- obrazy Docker budujesz lokalnie, np. z VS Code,
-- wypychasz je do Artifact Registry,
-- Terraform uruchamiasz lokalnie,
-- repo nie zaklada GitHub Actions ani Cloud Build.
-
-### 1. Wymagania
-
-- `gcloud` zalogowany przez `gcloud auth login`
-- ADC skonfigurowane przez `gcloud auth application-default login`
-- Docker z obsluga `linux/amd64`
-- Terraform `>= 1.5`
-- istniejąca baza PostgreSQL dostepna z Cloud Run
-
-Uwaga:
-
-- Terraform w tym repo nie tworzy bazy danych.
-- Do `database_url` podajesz gotowy adres swojej bazy: Cloud SQL, AlloyDB lub zewnetrzny PostgreSQL.
-- Jesli wybierasz Cloud SQL, skonfiguruj lacznosc do bazy osobno i wpisz poprawny DSN w `terraform.tfvars`.
-
-### 2. Bootstrap projektu GCP
-
-Skrypt wlacza wymagane API i tworzy bucket na stan Terraform:
+Wdrożenie odbywa się w pełni z lokalnej maszyny:
 
 ```bash
+# 1. Bootstrap projektu GCP (włącza API, tworzy bucket na stan Terraform)
 ./scripts/gcp_bootstrap.sh <PROJECT_ID> <BILLING_ACCOUNT_ID> [REGION]
-```
 
-Skrypt nie buduje obrazow i nie publikuje nic przez GitHub.
-
-### 3. Zbuduj obrazy lokalnie
-
-Cloud Run uruchamia obrazy `linux/amd64`, wiec buduj je zawsze z tym targetem:
-
-```bash
-export PROJECT_ID=<your-gcp-project-id>
-export REGION=europe-west4
-
-export IMAGE_BACKEND=$REGION-docker.pkg.dev/$PROJECT_ID/diag1/backend:release-001
-export IMAGE_FRONTEND=$REGION-docker.pkg.dev/$PROJECT_ID/diag1/frontend:release-001
-
-gcloud config set project "$PROJECT_ID"
+# 2. Zbuduj i wypchnij obrazy (Cloud Run wymaga linux/amd64)
+export PROJECT_ID=<your-gcp-project-id> REGION=europe-west4
 gcloud auth configure-docker "$REGION-docker.pkg.dev"
+docker build --platform linux/amd64 -t "$REGION-docker.pkg.dev/$PROJECT_ID/diag1/backend:release-001" ./backend
+docker build --platform linux/amd64 --build-arg VITE_API_URL=https://twoja-domena \
+  -t "$REGION-docker.pkg.dev/$PROJECT_ID/diag1/frontend:release-001" ./frontend
+docker push "$REGION-docker.pkg.dev/$PROJECT_ID/diag1/backend:release-001"
+docker push "$REGION-docker.pkg.dev/$PROJECT_ID/diag1/frontend:release-001"
 
-docker build --platform linux/amd64 -t "$IMAGE_BACKEND" ./backend
-docker build --platform linux/amd64 \
-  --build-arg VITE_API_URL=https://app.example.com \
-  -t "$IMAGE_FRONTEND" \
-  ./frontend
-```
-
-### 4. Wypchnij obrazy do Artifact Registry
-
-```bash
-docker push "$IMAGE_BACKEND"
-docker push "$IMAGE_FRONTEND"
-```
-
-### 5. Ustaw Terraform
-
-Przygotuj konfiguracje:
-
-```bash
-cp terraform/stage/terraform.tfvars.example terraform/stage/terraform.tfvars
-```
-
-Uzupełnij w `terraform/stage/terraform.tfvars` co najmniej:
-
-- `project_id`
-- `region`
-- `domain`
-- `database_url`
-- `backend_image`
-- `frontend_image`
-- opcjonalnie `frontend_access_password`
-- opcjonalnie `frontend_access_cookie_secret`
-
-Jesli chcesz przechowywac stan Terraform w GCS, odkomentuj backend `gcs` w `terraform/stage/main.tf`.
-
-### 6. Uruchom Terraform lokalnie
-
-```bash
+# 3. Terraform (środowisko stage)
+cp terraform/stage/terraform.tfvars.example terraform/stage/terraform.tfvars  # uzupełnij
 ./scripts/terraform_gcp.sh --env stage init
-./scripts/terraform_gcp.sh --env stage plan -var-file=terraform.tfvars
 ./scripts/terraform_gcp.sh --env stage apply -var-file=terraform.tfvars
 ```
 
-Terraform wystawia:
+Terraform wystawia: Artifact Registry, Cloud Run (backend + frontend), globalny Load Balancer i zarządzany certyfikat SSL. Po `apply` pobierz adres LB (`terraform output -raw lb_ip`) i dodaj rekord `A` dla domeny. Pomocnicze: `scripts/show_dns_records.sh`, `scripts/smoke_check_cloudrun.sh`.
 
-- Artifact Registry
-- Cloud Run backend
-- Cloud Run frontend
-- globalny Load Balancer
-- zarzadzany certyfikat SSL
+## Konfiguracja
 
-### 7. DNS i weryfikacja
+Najważniejsze zmienne środowiskowe (pełna lista w [.env.example](.env.example)):
 
-Po `apply` pobierz adres LB:
+| Zmienna | Opis |
+|---|---|
+| `AI_PROVIDER` | `vertex` / `gemini` / `auto` |
+| `GEMINI_API_KEY` | klucz dla Gemini Developer API |
+| `VERTEX_PROJECT_ID`, `VERTEX_LOCATION` | konfiguracja Vertex AI |
+| `DATABASE_URL` | DSN do PostgreSQL |
+| `ADMIN_PASSWORD` | **ustaw własną wartość** w każdym wdrożeniu |
+| `FRONTEND_ACCESS_PASSWORD`, `FRONTEND_ACCESS_COOKIE_SECRET` | opcjonalna bramka hasłowa front-endu |
+| `SESSION_TTL_HOURS` | czas życia sesji analitycznej |
 
-```bash
-cd terraform/stage
-terraform output -raw lb_ip
-```
+## Bezpieczeństwo
 
-Dodaj rekord `A` dla swojej domeny wskazujacy na ten adres.
-
-Pomocniczo:
-
-```bash
-./scripts/show_dns_records.sh stage
-./scripts/smoke_check_cloudrun.sh https://app.example.com
-```
-
-## Pliki lokalne, ktore nie powinny trafic do Git
-
-Do repo nie powinny trafic miedzy innymi:
-
-- `.env`
-- `terraform/**/*.tfvars`
-- `backend/seed/`
-- `backend/tests/`
-- `backend/app/testsupport/`
-- `docker-compose.test.yml`
-- lokalne klucze JSON, np. `backend/service-account.local.json`
-- dokumenty, badania, notatki i eksporty robocze
-
-## Bezpieczenstwo
-
-- Nie commituj plikow z kluczami, haslami ani lokalnych eksportow danych.
-- Dla publicznego wdrozenia ustaw wlasne wartosci `ADMIN_PASSWORD` i, jesli wlaczasz bramke haslową, rowniez `FRONTEND_ACCESS_COOKIE_SECRET`.
-- `terraform.tfvars` i `.env` maja zostac lokalne.
+- Nie commituj plików z kluczami, hasłami ani lokalnych eksportów danych — `.env` i `terraform/**/*.tfvars` są poza Gitem.
+- W każdym wdrożeniu ustaw własne `ADMIN_PASSWORD`, a przy włączonej bramce hasłowej również `FRONTEND_ACCESS_COOKIE_SECRET`.
+- Dane medyczne są anonimizowane po stronie serwera **przed** wysłaniem do modelu AI.
+- Repozytorium ma włączone GitHub secret scanning + push protection.
 
 ## Licencja
 
-Projekt jest objety licencja z pliku `LICENSE`.
+Projekt na licencji [MIT](LICENSE).
+
+---
+
+<sub>Projekt akademicki (praca końcowa, IMiOZ). Repozytorium zawiera wyłącznie kod aplikacji i infrastrukturę — bez dokumentów projektowych, danych badań i wyników testów.</sub>
